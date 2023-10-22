@@ -1,0 +1,28 @@
+#include <stdint.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include "stm32f10x.h"
+
+void SysTick_Handler()
+{
+    // Executa um toggle no PB11 (LED 1)
+    GPIOB->ODR ^= (1 << 11);
+}
+
+int main(void)
+{
+    // Habilita o GPIOB
+    RCC->APB2ENR = 0x00000008;
+
+    // Configura o PB11 como saída
+    GPIOB->CRH = 0x44443444;
+
+    // Configura o SysTick para gerar uma interrupção a cada 500 ms (2 Hz)
+    SysTick->LOAD = 5000000 - 1; // 500 ms (em microssegundos)
+    SysTick->CTRL = 0x00000007;  // Habilita o SysTick e a interrupção
+
+    while (1)
+    {
+        // O loop infinito não precisa de código adicional
+    }
+}
