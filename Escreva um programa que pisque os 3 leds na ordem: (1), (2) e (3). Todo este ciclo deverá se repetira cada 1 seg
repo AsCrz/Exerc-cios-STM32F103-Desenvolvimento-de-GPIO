@@ -1,0 +1,42 @@
+#include <stdint.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include "stm32f10x.h"
+
+void SysTick_Handler()
+{
+    static uint8_t VerificaLED = 0; // Variável para rastrear o estado do LED (1, 2 ou 3)
+
+    // Desliga todos os LEDs
+    GPIOB->ODR &= ~((1 << 10) | (1 << 11) | (1 << 12));
+
+    // Liga o LED correspondente ao estado atual
+    if (VerificaLED == 0) {
+        GPIOB->ODR |= (1 << 10); // Liga o LED 1 (PB10)
+    } else if (VerificaLED == 1) {
+        GPIOB->ODR |= (1 << 11); // Liga o LED 2 (PB11)
+    } else {
+        GPIOB->ODR |= (1 << 12); // Liga o LED 3 (PB12)
+    }
+
+    // Atualiza o estado do LED para o próximo ciclo
+    VerificaLED = (VerificaLED + 1) % 3;
+}
+
+int main(void)
+{
+    // Habilita o GPIOB
+    RCC->APB2ENR = 0x00000008;
+
+    // Configura os pinos PB10, PB11 e PB12 como saídas
+    GPIOB->CRH = 0x44443444; // PB10, PB11, PB12
+
+    // Configura o SysTick para gerar uma interrupção a cada 1 segundo
+    SysTick->LOAD = 8000000 - 1; // 1 segundo (em microssegundos)
+    SysTick->CTRL = 0x00000007;  // Habilita o SysTick e a interrupção
+
+    while (1)
+    {
+        
+    }
+}
