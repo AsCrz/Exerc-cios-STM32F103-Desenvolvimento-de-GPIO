@@ -5,16 +5,16 @@
 
 void SysTick_Handler()
 {
-    // Lê o estado da Tecla 1 (suponhamos que esteja no pino PA0)
+    // Lê o estado da Tecla 1 (pino PA0)
     bool teclaPressionada = (GPIOA->IDR & (1 << 0)) == 0;
 
     // Controle do LED com base no estado da Tecla 1
     if (teclaPressionada) {
         // Tecla 1 está pressionada, liga o LED (PB11)
-        GPIOB->BSRR = (1 << 11); // Liga o LED (PB11)
+        GPIOB->BSRR = (1 << 11); 
     } else {
         // Tecla 1 está liberada, apaga o LED (PB11)
-        GPIOB->BSRR = (1 << (11 + 16)); // Desliga o LED (PB11)
+        GPIOB->BSRR = (1 << (11 + 16)); 
     }
 }
 
@@ -30,7 +30,7 @@ int main(void)
     RCC->APB2ENR |= (1 << 2);
 
     // Configura o pino PA0 como entrada
-    GPIOA->CRL &= ~(0xF); // Limpa os bits de configuração (bits 0-3) para PA0
+    GPIOA->CRL &= ~(0xF); // Limpa os bits de configuração 
 
     // Configura o SysTick para gerar uma interrupção a cada 1 segundo
     SysTick->LOAD = 8000000 - 1; // 1 segundo (em microssegundos)
