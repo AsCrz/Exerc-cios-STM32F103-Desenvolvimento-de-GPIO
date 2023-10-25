@@ -1,3 +1,6 @@
+#include <stdint.h>
+#include <stdbool.h>
+#include <stdio.h>
 #include "stm32f10x.h"
 
 void SysTick_Handler()
@@ -33,7 +36,7 @@ int main(void)
     RCC->APB2ENR = 0x0000000C;
 
     // Configura os pinos PB12 e PB13 como saída
-     GPIOB->CRH = 0x44444444; 
+     GPIOB->CRH = 0x44443444; 
 
     // Habilita o GPIOA para Tecla 1 e Tecla 2 (suponhamos que estejam nos pinos PA0 e PA1)
     RCC->APB2ENR |= (1 << 2);
@@ -41,8 +44,8 @@ int main(void)
     // Configura os pinos PA0 e PA1 como entrada
     GPIOA->CRL &= ~(0xFF); // Limpa os bits de configuração 
 
-    // Configura o SysTick para gerar uma interrupção a cada 200 ms
-    SysTick->LOAD = 1600000 - 1; // Aproximadamente cada quinto de segundo
+    // Configura o SysTick para gerar uma interrupção a cada 1s
+    SysTick->LOAD = 8000000 - 1; // 1 segundo (em microssegundos)
     SysTick->CTRL = 0x00000007;  // Habilita o SysTick e a interrupção
 
     while (1)
