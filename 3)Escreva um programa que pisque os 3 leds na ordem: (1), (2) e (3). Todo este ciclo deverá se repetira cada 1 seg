@@ -19,8 +19,7 @@ void SysTick_Handler()
         GPIOB->ODR |= (1 << 12); // Liga o LED 3 (PB12)
     }
 
-    // Atualiza o estado do LED para o próximo ciclo
-    VerificaLED = (VerificaLED + 1) % 3;
+
 }
 
 int main(void)
