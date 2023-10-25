@@ -18,7 +18,7 @@ int main(void)
     GPIOB->CRH = 0x44443444;
 
     // Configura o SysTick para gerar uma interrupção a cada 500 ms (2 Hz)
-    SysTick->LOAD = 5000000 - 1; // 500 ms (em microssegundos)
+    SysTick->LOAD = 5000000 - 1; // 500 ms
     SysTick->CTRL = 0x00000007;  // Habilita o SysTick e a interrupção
 
     while (1)
