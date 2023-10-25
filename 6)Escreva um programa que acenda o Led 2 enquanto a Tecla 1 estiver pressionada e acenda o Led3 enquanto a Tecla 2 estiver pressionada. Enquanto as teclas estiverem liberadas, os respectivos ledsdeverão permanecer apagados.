@@ -1,0 +1,52 @@
+#include "stm32f10x.h"
+
+void SysTick_Handler()
+{
+    // Lê o estado da Tecla 1 (pino PA0)
+    bool tecla1Pressionada = (GPIOA->IDR & (1 << 0)) == 0;
+
+    // Controle do LED 2 com base no estado da Tecla 1
+    if (tecla1Pressionada) {
+        // Tecla 1 está pressionada, liga o LED 2 (PB12)
+        GPIOB->BSRR = (1 << 12); 
+    } else {
+        // Tecla 1 está liberada, apaga o LED 2 (PB12)
+        GPIOB->BSRR = (1 << (12 + 16)); 
+    }
+
+    // Lê o estado da Tecla 2 (pino PA1)
+    bool tecla2Pressionada = (GPIOA->IDR & (1 << 1)) == 0;
+
+    // Controle do LED 3 com base no estado da Tecla 2
+    if (tecla2Pressionada) {
+        // Tecla 2 está pressionada, liga o LED 3 (PB13)
+        GPIOB->BSRR = (1 << 13); 
+    } else {
+        // Tecla 2 está liberada, apaga o LED 3 (PB13)
+        GPIOB->BSRR = (1 << (13 + 16)); 
+    }
+}
+
+int main(void)
+{
+    // Habilita o GPIOB e GPIOA
+    RCC->APB2ENR = 0x0000000C;
+
+    // Configura os pinos PB12 e PB13 como saída
+     GPIOB->CRH = 0x44444444; 
+
+    // Habilita o GPIOA para Tecla 1 e Tecla 2 (suponhamos que estejam nos pinos PA0 e PA1)
+    RCC->APB2ENR |= (1 << 2);
+
+    // Configura os pinos PA0 e PA1 como entrada
+    GPIOA->CRL &= ~(0xFF); // Limpa os bits de configuração 
+
+    // Configura o SysTick para gerar uma interrupção a cada 200 ms
+    SysTick->LOAD = 1600000 - 1; // Aproximadamente cada quinto de segundo
+    SysTick->CTRL = 0x00000007;  // Habilita o SysTick e a interrupção
+
+    while (1)
+    {
+        
+    }
+}
