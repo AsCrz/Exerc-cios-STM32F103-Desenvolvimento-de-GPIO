@@ -24,7 +24,7 @@ int main(void)
     RCC->APB2ENR = 0x0000000C;
 
     // Configura o pino PB11 como saída
-    GPIOB->CRH = 0x44444444; // PB11
+     GPIOB->CRH = 0x44443444; 
 
     // Habilita o GPIOA para Tecla 1 (suponhamos que esteja no pino PA0)
     RCC->APB2ENR |= (1 << 2);
