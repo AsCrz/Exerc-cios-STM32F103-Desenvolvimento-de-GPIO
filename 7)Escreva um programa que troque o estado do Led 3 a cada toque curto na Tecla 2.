@@ -1,3 +1,6 @@
+#include <stdint.h>
+#include <stdbool.h>
+#include <stdio.h>
 #include "stm32f10x.h"
 
 volatile uint32_t lastButtonState = 0;
