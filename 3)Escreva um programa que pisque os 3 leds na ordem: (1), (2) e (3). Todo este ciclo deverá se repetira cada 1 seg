@@ -11,14 +11,18 @@ void SysTick_Handler()
     GPIOB->ODR &= ~((1 << 11) | (1 << 12) | (1 << 13));
 
     // Liga o LED correspondente ao estado atual
-    if (verificaLED == 0) {
+    switch (verificaLED) 
+{
+    case 0:
         GPIOB->ODR |= (1 << 11); // Liga o LED 1 (PB10)
-    } else if (verificaLED == 1) {
+        break;
+    case 1:
         GPIOB->ODR |= (1 << 12); // Liga o LED 2 (PB11)
-    } else {
+        break;
+    case 2:
         GPIOB->ODR |= (1 << 13); // Liga o LED 3 (PB12)
-    }
-
+        break;
+}
     verificaLED = (verificaLED + 1) % 3; // Atualiza o estado do LED
 }
 
