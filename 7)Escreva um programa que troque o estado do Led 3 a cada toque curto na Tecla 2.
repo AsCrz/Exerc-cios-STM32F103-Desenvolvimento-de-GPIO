@@ -1,0 +1,44 @@
+#include "stm32f10x.h"
+
+volatile uint32_t lastButtonState = 0;
+
+void SysTick_Handler()
+{
+    // Lê o estado da Tecla 2 (pino PA1)
+    uint32_t currentButtonState = GPIOA->IDR & (1 << 1);
+
+    // Verifica se a Tecla 2 foi pressionada
+    if(currentButtonState != lastButtonState)
+    {
+        lastButtonState = currentButtonState;
+        if(currentButtonState == 0) // Verifica se a Tecla 2 está pressionada
+        {
+            // Troca o estado do LED 3 (PB13)
+            GPIOB->ODR ^= (1 << 13);
+        }
+    }
+}
+
+int main(void)
+{
+    // Habilita o GPIOB e GPIOA
+    RCC->APB2ENR = 0x0000000C;
+
+    // Configura o pino PB13 como saída
+     GPIOB->CRH = 0x44443444; 
+
+    // Habilita o GPIOA para Tecla 2 (suponhamos que esteja no pino PA1)
+    RCC->APB2ENR |= (1 << 2);
+
+    // Configura o pino PA1 como entrada
+    GPIOA->CRL &= ~(0xF << 4); // Limpa os bits de configuração 
+
+    // Configura o SysTick para gerar uma interrupção a cada 1s
+    SysTick->LOAD = 8000000 - 1; // 1 segundo (em microssegundos)
+    SysTick->CTRL = 0x00000007;  // Habilita o SysTick e a interrupção
+
+    while (1)
+    {
+        
+    }
+}
