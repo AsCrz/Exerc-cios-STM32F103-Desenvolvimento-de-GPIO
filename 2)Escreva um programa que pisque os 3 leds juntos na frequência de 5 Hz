@@ -23,6 +23,6 @@ int main(void)
 
     while (1)
     {
-        // O loop infinito não precisa de código adicional
+        
     }
 }
