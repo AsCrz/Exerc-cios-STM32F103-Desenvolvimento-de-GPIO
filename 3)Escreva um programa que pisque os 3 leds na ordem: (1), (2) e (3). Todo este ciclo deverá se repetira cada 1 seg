@@ -8,7 +8,7 @@ void SysTick_Handler()
     static uint8_t VerificaLED = 0; // Variável para rastrear o estado do LED (1, 2 ou 3)
 
     // Desliga todos os LEDs
-    GPIOB->ODR &= ~((1 << 10) | (1 << 11) | (1 << 12));
+    GPIOB->ODR &= ~((1 << 11) | (1 << 12) | (1 << 13));
 
     // Liga o LED correspondente ao estado atual
     if (VerificaLED == 0) {
