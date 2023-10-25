@@ -20,8 +20,8 @@ bool teclaPressionada = (GPIOA->IDR & (1 << 0)) == 0;
 
 int main(void)
 {
-    // Configura o pino PB11 como saída (LED 1)
-    GPIOB->CRH = 0x44444444; 
+    // Configura o PB11 como saída
+    GPIOB->CRH = 0x44443444;
 
     // Habilita o GPIOA para Tecla 1 (supomos que esteja no pino PA0)
     RCC->APB2ENR |= (1 << 2);
