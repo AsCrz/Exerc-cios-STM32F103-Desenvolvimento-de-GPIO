@@ -11,7 +11,7 @@ void SysTick_Handler()
     GPIOB->ODR &= ~((1 << 11) | (1 << 12) | (1 << 13));
 
     // Liga o LED correspondente ao estado atual
-    switch (verificaLED) 
+    switch (verificaLED)
 {
     case 0:
         GPIOB->ODR |= (1 << 11); // Liga o LED 1 (PB11)
@@ -32,7 +32,7 @@ int main(void)
     RCC->APB2ENR = 0x00000008;
 
     // Configura os pinos PB11, PB12 e PB13 como saída
-    GPIOB->CRH = 0x44443444; 
+    GPIOB->CRH = 0x44333444;
 
     // Configura o SysTick para gerar uma interrupção a cada 1 segundo
     SysTick->LOAD = 8000000 - 1; // 1 segundo (em microssegundos)
@@ -40,6 +40,6 @@ int main(void)
 
     while (1)
     {
-        
+
     }
 }
