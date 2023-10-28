@@ -8,7 +8,7 @@ volatile uint32_t lastButtonState = 0;
 void SysTick_Handler()
 {
     // Lê o estado da Tecla 2 (pino PA1)
-    uint32_t currentButtonState = GPIOA->IDR & (1 << 1);
+    uint32_t currentButtonState = GPIOA->IDR & (1 << 6);
 
     // Verifica se a Tecla 2 foi pressionada
     if(currentButtonState != lastButtonState)
@@ -28,13 +28,12 @@ int main(void)
     RCC->APB2ENR = 0x0000000C;
 
     // Configura o pino PB13 como saída
-     GPIOB->CRH = 0x44443444; 
+    GPIOB->CRH = 0x44344444;
 
     // Habilita o GPIOA para Tecla 2 (suponhamos que esteja no pino PA1)
-    RCC->APB2ENR |= (1 << 2);
+    GPIOB->CRL = 0x48444444;
 
-    // Configura o pino PA1 como entrada
-    GPIOA->CRL &= ~(0xF << 4); // Limpa os bits de configuração 
+    GPIOB->ODR |= (1 << 6);
 
     // Configura o SysTick para gerar uma interrupção a cada 1s
     SysTick->LOAD = 8000000 - 1; // 1 segundo (em microssegundos)
@@ -42,6 +41,6 @@ int main(void)
 
     while (1)
     {
-        
+
     }
 }
