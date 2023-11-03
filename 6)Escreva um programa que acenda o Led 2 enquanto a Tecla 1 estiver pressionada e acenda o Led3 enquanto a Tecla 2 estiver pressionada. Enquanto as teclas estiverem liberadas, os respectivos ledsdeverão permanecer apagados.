@@ -1,49 +1,43 @@
-#include <stdint.h>
-#include <stdbool.h>
-#include <stdio.h>
 #include "stm32f10x.h"
-
-void SysTick_Handler()
-{
-    // Controle do LED 2 com base no estado da Tecla 1
-    if ((GPIOA->IDR & (1 << 7)) == 0) {
-        // Tecla 1 está pressionada, liga o LED 2 (PB12)
-        GPIOB->ODR |= (1 << 12);
-    } else {
-        // Tecla 1 está liberada, apaga o LED 2 (PB12)
-        GPIOB->ODR &= ~(1 << 12);
-    }
-
-    // Controle do LED 3 com base no estado da Tecla 2
-    if ((GPIOA->IDR & (1 << 6)) == 0) {
-        // Tecla 2 está pressionada, liga o LED 3 (PB13)
-        GPIOB->ODR |= (1 << 13);
-    } else {
-        // Tecla 2 está liberada, apaga o LED 3 (PB13)
-        GPIOB->ODR &= ~(1 << 13);
-    }
-}
 
 int main(void)
 {
     // Habilita o GPIOB e GPIOA
-    RCC->APB2ENR = 0x0000000C;
+    RCC->APB2ENR |= RCC_APB2ENR_IOPAEN | RCC_APB2ENR_IOPBEN;
 
-    // Configura os pinos PB12 e PB13 como saída
-    GPIOB->CRH = 0x44334444;
+    // Configura os pinos PB10 (LED 2) e PB1 (LED 3) como saída
+    GPIOB->CRL &= ~(GPIO_CRL_MODE1 | GPIO_CRL_CNF1);
+    GPIOB->CRH &= ~(GPIO_CRH_MODE10 | GPIO_CRH_CNF10);
+    GPIOB->CRL |= GPIO_CRL_MODE1;
+    GPIOB->CRH |= GPIO_CRH_MODE10;
 
-    // Configura os pinos PA6 e PA7 como entrada
-    GPIOA->CRL = 0x88444444;
+    // Configura os pinos PB0 (Tecla 1) e PA7 (Tecla 2) como entrada
+    GPIOB->CRL &= ~(GPIO_CRL_MODE0 | GPIO_CRL_CNF0);
+    GPIOB->CRL |= GPIO_CRL_CNF0_1;
+    GPIOA->CRL &= ~(GPIO_CRL_MODE7 | GPIO_CRL_CNF7);
+    GPIOA->CRL |= GPIO_CRL_CNF7_1;
 
-    // Habilita o resistor de pull-up dos pinos PA6 e PA7
-    GPIOA->ODR |= (1 << 7) | (1 << 6);
-
-    // Configura o SysTick para gerar uma interrupção a cada 1s
-    SysTick->LOAD = 8000000 - 1; // 1 segundo (em microssegundos)
-    SysTick->CTRL = 0x00000007;  // Habilita o SysTick e a interrupção
-
+    // Habilita o resistor de pull-up dos pinos PA0 e PA7
+    GPIOB->ODR |= GPIO_ODR_ODR0;
+    GPIOA->ODR |= GPIO_ODR_ODR7;
     while (1)
     {
+    	// Controle do LED 2 com base no estado da Tecla 1
+    	if ((GPIOB->IDR & GPIO_IDR_IDR0) == 0) {
+    		// Tecla 1 está pressionada, liga o LED 2 (PB10)
+    		GPIOB->ODR |= GPIO_ODR_ODR10;
+    	} else {
+    		// Tecla 1 está liberada, apaga o LED 2 (PB10)
+    		GPIOB->ODR &= ~GPIO_ODR_ODR10;
+    	}
 
+    	// Controle do LED 3 com base no estado da Tecla 2
+    	if ((GPIOA->IDR & GPIO_IDR_IDR7) == 0) {
+    		// Tecla 2 está pressionada, liga o LED 3 (PB1)
+    		GPIOB->ODR |= GPIO_ODR_ODR1;
+    	} else {
+    		// Tecla 2 está liberada, apaga o LED 3 (PB1)
+    		GPIOB->ODR &= ~GPIO_ODR_ODR1;
+    	}
     }
 }
