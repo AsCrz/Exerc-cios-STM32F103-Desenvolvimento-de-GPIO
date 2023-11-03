@@ -3,19 +3,11 @@
 #include <stdio.h>
 #include "stm32f10x.h"
 
-
-void SysTick_Handler()
-{
-
-	//bool teclaPressionada = (GPIOA->IDR & (1 << 0)) == 0;
-
-	if ((GPIOA->IDR & (1 << 7)) == 0) {
-        // Tecla 1 está pressionada, liga o LED (PB11)
-    	GPIOB->ODR ^= (1 << 11);
-    } else {
-        // Tecla 1 está liberada, apaga o LED (PB11)
-    	GPIOB->ODR &= ~(1 << 11);
-    }
+void delay_ms(uint32_t ms) {
+	SysTick->LOAD = ms * 1000 - 1;
+	SysTick->CTRL = 0x1;
+	while ((SysTick->CTRL & SysTick_CTRL_COUNTFLAG) == 0) {}
+	SysTick->CTRL = 0x0;
 }
 
 int main(void)
@@ -23,24 +15,21 @@ int main(void)
 	// Habilita o GPIOB e GPIOA
 	RCC->APB2ENR = 0x0000000C;
 
-    // Configura o PB11 como saída
-    GPIOB->CRH = 0x44443444;
+	// Configura o PB11 como saída
+	GPIOB->CRH = 0x44443444;
 
-    // Habilita o GPIOA para Tecla 1 (supomos que esteja no pino PA0)
-    //RCC->APB2ENR |= (1 << 2);
+	// Configura o pino PA7 como entrada
+	GPIOA->CRL = 0x84444444;
 
-    // Configura o pino PA0 como entrada
-    //GPIOA->CRL &= ~(0xF); // Limpa os bits de configuração
-    GPIOA->CRL = 0x84444444;
+	// Habilita o resistor de pull-up do pino PA7
+	GPIOA->ODR |= (1 << 7);
 
-    GPIOA->ODR |= (1 << 7);
-
-    // Configura o SysTick para gerar uma interrupção a cada 0,5 segundos (2 Hz)
-    SysTick->LOAD = 5000000 - 1; // 0,5 ms
-    SysTick->CTRL = 0x00000007;  // Habilita o SysTick e a interrupção
-
-    while (1)
-    {
-
-    }
+	while (1) {
+		if ((GPIOA->IDR & GPIO_IDR_IDR7) == 0) ) {
+			GPIOB->ODR ^= GPIO_ODR_ODR11;
+			delay_ms(500); // 2 Hz
+		} else {
+			GPIOB->ODR &= ~GPIO_ODR_ODR11;
+		}
+	}
 }
