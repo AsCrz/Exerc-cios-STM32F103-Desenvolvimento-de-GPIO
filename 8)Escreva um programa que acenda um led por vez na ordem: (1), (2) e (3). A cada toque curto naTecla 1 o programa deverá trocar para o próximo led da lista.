@@ -31,7 +31,7 @@ int main(void) {
     volatile uint32_t lastButtonState = 0;
 
     while (1) {
-        // Lê o estado da Tecla 1 (pino PA0)
+        // Lê o estado da Tecla 1 (pino PB0)
         uint32_t currentButtonState = GPIOB->IDR & GPIO_IDR_IDR0;
 
         // Verifica se a Tecla 1 foi pressionada
