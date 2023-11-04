@@ -1,46 +1,44 @@
 #include <stdint.h>
-#include <stdbool.h>
-#include <stdio.h>
+
 #include "stm32f10x.h"
 
-volatile uint32_t lastButtonState = 0;
-
-void SysTick_Handler()
-{
-    // Lê o estado da Tecla 2 (pino PA1)
-    uint32_t currentButtonState = GPIOA->IDR & (1 << 6);
-
-    // Verifica se a Tecla 2 foi pressionada
-    if(currentButtonState != lastButtonState)
-    {
-        lastButtonState = currentButtonState;
-        if(currentButtonState == 0) // Verifica se a Tecla 2 está pressionada
-        {
-            // Troca o estado do LED 3 (PB13)
-            GPIOB->ODR ^= (1 << 13);
-        }
-    }
+void delay_ms(uint32_t ms) {
+	SysTick->LOAD = ms * 1000 - 1;
+	SysTick->CTRL = 0x1;
+	while ((SysTick->CTRL & SysTick_CTRL_COUNTFLAG) == 0) {}
+	SysTick->CTRL = 0x0;
 }
 
-int main(void)
-{
+int main(void) {
     // Habilita o GPIOB e GPIOA
-    RCC->APB2ENR = 0x0000000C;
+    RCC->APB2ENR = RCC_APB2ENR_IOPAEN | RCC_APB2ENR_IOPBEN;
 
-    // Configura o pino PB13 como saída
-    GPIOB->CRH = 0x44344444;
+    // Configura o pino PB1 (LED 3) como saída
+    GPIOB->CRL &= ~(GPIO_CRL_MODE1 | GPIO_CRL_CNF1);
+    GPIOB->CRL |= GPIO_CRL_MODE1;
 
-    // Habilita o GPIOA para Tecla 2 (suponhamos que esteja no pino PA1)
-    GPIOB->CRL = 0x48444444;
+    // Configura o pino PA7 (Tecla 2) como entrada
+    GPIOA->CRL &= ~(GPIO_CRL_MODE7 | GPIO_CRL_CNF7);
+    GPIOA->CRL |= GPIO_CRL_CNF7_1;
 
-    GPIOB->ODR |= (1 << 6);
+    // Habilita o resistor de pull-up do pino PA7 (Tecla 2)
+    GPIOA->ODR |= GPIO_ODR_ODR7;
 
-    // Configura o SysTick para gerar uma interrupção a cada 1s
-    SysTick->LOAD = 8000000 - 1; // 1 segundo (em microssegundos)
-    SysTick->CTRL = 0x00000007;  // Habilita o SysTick e a interrupção
+    uint32_t lastButtonState = 0;
+    while (1) {
+    	// Lê o estado da Tecla 2 (pino PA1)
+    	uint32_t currentButtonState = GPIOA->IDR & GPIO_IDR_IDR7;
 
-    while (1)
-    {
-
+    	    // Compara o estado atual com o antigo da tecla
+    	    if (currentButtonState != lastButtonState) {
+    	        lastButtonState = currentButtonState;
+    	        // Verifica se a Tecla 2 está pressionada
+    	        if (currentButtonState == 0) {
+    	            // Troca o estado do LED 3 (PB1)
+    	            GPIOB->ODR ^= GPIO_ODR_ODR1;
+    	        }
+    	        // Espera 100 ms antes de verificar novamente o estado do botão
+    	        delay_ms(100);
+    	    }
     }
 }
